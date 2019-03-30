@@ -1,6 +1,11 @@
 require 'sinatra'
 require 'sinatra/reloader'
 
+# If a GET request comes in at /, do the following.
+get '/' do
+  erb :main
+end
+
 # Show the truth table
 get '/display' do
   # get the params
@@ -40,42 +45,45 @@ get '/display' do
   # generate the table
   table = Array.new
   n = size.to_i
-
   (2**n).times do |index|
+    num_of_t = 0
     result = Array.new
     logic_and = true
     logic_or = false
     logic_nand = false
     logic_nor = true
-    # logic_xor = false
+    logic_xor = false
+    logic_single = false
 
     n.times do |i|
-      if (index/2**(n-i-1))%2 == 1
+      if (index/(2**(n-i-1)))%2 == 1
         logic_or = true
         logic_nor = false
-        # logic_xor = !logic_xor
         result << true
+        num_of_t += 1
       else
         logic_and = false
         logic_nand = true
         result << false
       end
     end
+    if num_of_t == 1
+      logic_single = true
+    end
+    if num_of_t.odd?
+      logic_xor = true
+    end
     result << logic_and
     result << logic_or
     result << logic_nand
     result << logic_nor
-    # result << logic_xor
+    result << logic_xor
+    result << logic_single
     table << result
   end
 
   # show the table
   erb :display, :locals => {ts: ts, fs: fs, size: size, table: table,}
-end
-
-# If a GET request comes in at /, do the following.
-get '/' do
-  erb :main
 end
 
 # What to do if we can't find the route
