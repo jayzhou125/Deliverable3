@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body>
+		 <table>
+				<tr>
+					<! make header />
+					<% (size.to_i).times do |i| %>
+					<th>
+						<%= (size.to_i - i - 1) %>
+					</th>
+					<% end %>
+					<th>AND</th>
+					<th>OR</th>
+					<th>NAND</th>
+					<th>NOR</th>
+				</tr>
+				<! loop through each result />
+				<% table.each do |i| %>
+		    <tr>
+					<! fill each cell with value >
+					<% i.each do |j| %>
+						<% if j %>
+							<td><%= ts %></td>
+						<% else %>
+							<td><%= fs %></td>
+						<% end %>
+					<% end %>
+        </tr>
+				<% end %>
+		 </table><br>
+		<a href="/">Back to main page</a>
+  </body>
+</html>

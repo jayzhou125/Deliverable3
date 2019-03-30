@@ -1,22 +1,6 @@
 require 'sinatra'
 require 'sinatra/reloader'
 
-# generate the table
-def generate_table(ts, fs, size)
-  puts "this method is called"
-  table = Array.new(2**@size.to_i){Array.new(@size.to_i)}
-  table.each_with_index do |row, r|
-    row.each_with_index do |_, c|
-      if r/2**c == 0
-        table[r][c] == @fs
-      else r/2**c == 1
-        table[r][c] == @ts
-      end
-    end
-  end
-  table
-end
-
 # Show the truth table
 get '/display' do
   # get the params
@@ -54,11 +38,39 @@ get '/display' do
   end
 
   # generate the table
-  table = generate_table(ts, fs, size)
-  puts "#{table}"
+  table = Array.new
+  n = size.to_i
+
+  (2**n).times do |index|
+    result = Array.new
+    logic_and = true
+    logic_or = false
+    logic_nand = false
+    logic_nor = true
+    # logic_xor = false
+
+    n.times do |i|
+      if (index/2**(n-i-1))%2 == 1
+        logic_or = true
+        logic_nor = false
+        # logic_xor = !logic_xor
+        result << true
+      else
+        logic_and = false
+        logic_nand = true
+        result << false
+      end
+    end
+    result << logic_and
+    result << logic_or
+    result << logic_nand
+    result << logic_nor
+    # result << logic_xor
+    table << result
+  end
 
   # show the table
-  erb :display, :locals => { table: table, ts: ts, fs: fs, size: size}
+  erb :display, :locals => {ts: ts, fs: fs, size: size, table: table,}
 end
 
 # If a GET request comes in at /, do the following.
